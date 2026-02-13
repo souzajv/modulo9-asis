@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import { BusinessDriver, DriverStatus } from '../types';
 import { getIcon } from '../constants';
-import { CheckCircle2, Loader2, Code2, Activity, Terminal, BarChart3, FileJson, X } from 'lucide-react';
+import { CheckCircle2, Loader2, Code2, Activity, Terminal, BarChart3, FileJson, X, FlaskConical } from 'lucide-react';
 
 interface Props {
   driver: BusinessDriver;
@@ -38,8 +38,8 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
       
-      const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg rotation
-      const rotateY = ((x - centerX) / centerX) * 5;
+      const rotateX = ((y - centerY) / centerY) * -2; // Reduced rotation for wider card
+      const rotateY = ((x - centerX) / centerX) * 2;
 
       gsap.to(card, {
         rotationX: rotateX,
@@ -101,7 +101,6 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     }
     if (evidence.type === 'graph') {
         const { labels, datasets } = evidence.data;
-        // Simple SVG Chart Simulation
         return (
             <div className="w-full h-full bg-slate-900/50 rounded-lg p-4 border border-slate-800 flex flex-col">
                 <div className="flex justify-between items-center mb-4">
@@ -117,17 +116,11 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                 </div>
                 <div className="flex-1 relative border-l border-b border-slate-700">
                     <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                         {/* Grid Lines */}
                          {[0, 25, 50, 75, 100].map(y => (
                              <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="#334155" strokeWidth="0.5" strokeDasharray="2" />
                          ))}
 
                          {datasets.map((d: any, i: number) => {
-                             // Normalize Data to 0-100 scale for SVG
-                             // Rough Normalization logic for demo:
-                             // Users: max 20
-                             // Latency: max 8000
-                             // RPS: max 5
                              const max = d.name.includes('Latency') ? 8000 : d.name.includes('RPS') ? 5 : 20;
                              const points = d.values.map((v: number, idx: number) => {
                                  const x = (idx / (d.values.length - 1)) * 100;
@@ -161,10 +154,10 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     <div 
       ref={cardRef}
       className={`
-        relative w-[85vw] md:w-[650px]
-        ${showEvidence ? 'h-[75vh]' : 'h-[70vh] md:h-auto md:min-h-[550px]'}
+        relative w-[90vw] lg:w-[1100px]
+        ${showEvidence ? 'h-[80vh]' : 'h-auto min-h-[600px]'}
         bg-slate-900/80 backdrop-blur-xl border border-white/5
-        rounded-[2rem] p-8 flex flex-col
+        rounded-[2rem] p-8 md:p-12 flex flex-col justify-center
         shadow-2xl ${glowColor}
         group transition-all duration-500
         overflow-hidden
@@ -176,66 +169,102 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
       {/* Background Noise/Texture */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none mix-blend-overlay"></div>
 
-      {/* Main Content (Hidden/Shrunk when evidence is open?) No, we Overlay or Push */}
-      <div className={`transition-all duration-500 ${showEvidence ? 'opacity-20 blur-sm pointer-events-none' : 'opacity-100'}`}>
-          {/* Header */}
-          <div ref={contentRef} className="relative z-10">
-            <div className="flex justify-between items-start mb-6">
-              <div className={`
-                p-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm
-                ${textColor} shadow-[0_0_30px_-5px_rgba(0,0,0,0.3)]
-              `}>
-                {getIcon(driver.icon, "w-8 h-8")}
-              </div>
-              
-              <div className={`
-                px-4 py-2 rounded-full text-xs font-bold tracking-widest border flex items-center gap-2
-                ${isImplemented 
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                  : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}
-              `}>
-                {isImplemented ? <CheckCircle2 size={14} /> : <Loader2 size={14} className="animate-spin" />}
-                {isImplemented ? 'VALIDADO' : 'EM EXECUÇÃO'}
-              </div>
-            </div>
-
-            <h2 className="text-4xl font-bold text-white mb-2 tracking-tight">
-              {driver.id}
-            </h2>
-            <h3 className="text-xl text-slate-400 font-light mb-4 border-l-2 border-slate-700 pl-4">
-              {driver.title}
-            </h3>
-            
-            <p className="text-base text-slate-300 leading-relaxed font-light">
-              {driver.shortDescription}
-            </p>
-          </div>
-
-          {/* Body */}
-          <div className="relative z-10 mt-6 space-y-6">
-            <div className="space-y-3">
-                {driver.fullDescription.map((desc, i) => (
-                  <div key={i} className="flex items-start gap-3 text-slate-400 text-xs group/item">
-                    <div className={`mt-1 min-w-[5px] h-[5px] rounded-full bg-${mainColor}-500`} />
-                    <p>{desc}</p>
+      {/* Main Content */}
+      <div className={`transition-all duration-500 h-full ${showEvidence ? 'opacity-20 blur-sm pointer-events-none' : 'opacity-100'}`}>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 h-full items-start">
+             
+             {/* LEFT COLUMN: Header & Context */}
+             <div className="lg:col-span-5 flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex justify-between items-start mb-8">
+                    <div className={`
+                      p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm
+                      ${textColor} shadow-[0_0_30px_-5px_rgba(0,0,0,0.3)]
+                    `}>
+                      {getIcon(driver.icon, "w-10 h-10")}
+                    </div>
+                    
+                    <div className={`
+                      px-4 py-2 rounded-full text-xs font-bold tracking-widest border flex items-center gap-2
+                      ${isImplemented 
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                        : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}
+                    `}>
+                      {isImplemented ? <CheckCircle2 size={14} /> : <Loader2 size={14} className="animate-spin" />}
+                      {isImplemented ? 'VALIDADO' : 'EM EXECUÇÃO'}
+                    </div>
                   </div>
-                ))}
-            </div>
 
-            {/* Technical Footer */}
-            <div className="pt-4 border-t border-white/5">
-              <div className="flex items-center gap-2 mb-2">
-                <Code2 size={14} className={textColor} />
-                <span className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Implementação Técnica</span>
-              </div>
-              <div className={`
-                font-mono text-[10px] ${textColor} bg-black/40 p-3 rounded-xl border border-white/5
-                relative overflow-hidden
-              `}>
-                <div className={`absolute left-0 top-0 w-1 h-full bg-${mainColor}-500`} />
-                <span className="relative z-10">{driver.technicalDetails}</span>
-              </div>
-            </div>
+                  <h2 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-tight leading-tight">
+                    {driver.id}
+                  </h2>
+                  <h3 className="text-2xl text-slate-400 font-light mb-6">
+                    {driver.title}
+                  </h3>
+                  
+                  <p className="text-lg text-slate-300 leading-relaxed font-light mb-8">
+                    {driver.shortDescription}
+                  </p>
+                </div>
+
+                <div className="hidden lg:block">
+                   <div className="flex items-center gap-2 mb-3">
+                     <Code2 size={16} className={textColor} />
+                     <span className="text-xs font-mono tracking-[0.2em] text-slate-500 uppercase">Stack Técnica</span>
+                   </div>
+                   <div className={`
+                     font-mono text-xs ${textColor} bg-black/40 p-4 rounded-xl border border-white/5
+                     relative overflow-hidden
+                   `}>
+                     <div className={`absolute left-0 top-0 w-1 h-full bg-${mainColor}-500`} />
+                     <span className="relative z-10">{driver.technicalDetails}</span>
+                   </div>
+                </div>
+             </div>
+
+             {/* RIGHT COLUMN: Test Scenario & Details */}
+             <div className="lg:col-span-7 flex flex-col justify-center h-full space-y-8 bg-slate-950/30 p-8 rounded-3xl border border-white/5">
+                
+                {/* TEST CASE HIGHLIGHT */}
+                <div className="relative group/test">
+                   <div className={`absolute -left-1 top-0 h-full w-1 bg-${mainColor}-500 rounded-full`}></div>
+                   <div className="pl-6">
+                      <div className="flex items-center gap-2 text-slate-400 mb-2">
+                        <FlaskConical size={16} className={`text-${mainColor}-400`} />
+                        <span className="text-xs font-mono uppercase tracking-widest">Cenário de Teste / Aceite</span>
+                      </div>
+                      <p className="font-mono text-sm md:text-base text-slate-200 leading-relaxed bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                         <span className="text-slate-500 select-none mr-2">$</span>
+                         {driver.testScenario}
+                      </p>
+                   </div>
+                </div>
+
+                {/* Bullet Points */}
+                <div className="space-y-4">
+                    {driver.fullDescription.map((desc, i) => (
+                      <div key={i} className="flex items-start gap-4 text-slate-400 text-sm md:text-base group/item hover:text-slate-200 transition-colors">
+                        <div className={`mt-2 min-w-[6px] h-[6px] rounded-full bg-${mainColor}-500/50 group-hover/item:bg-${mainColor}-400 transition-colors`} />
+                        <p>{desc}</p>
+                      </div>
+                    ))}
+                </div>
+
+                {/* Mobile Tech Details (Hidden on Desktop) */}
+                <div className="lg:hidden pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Code2 size={14} className={textColor} />
+                    <span className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Implementação</span>
+                  </div>
+                  <div className={`
+                    font-mono text-[10px] ${textColor} bg-black/40 p-3 rounded-xl border border-white/5
+                  `}>
+                    {driver.technicalDetails}
+                  </div>
+                </div>
+
+             </div>
           </div>
       </div>
 
@@ -245,55 +274,61 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
             onClick={() => setShowEvidence(true)}
             className={`
                 absolute bottom-8 right-8 z-30
-                flex items-center gap-2 px-5 py-3 
+                flex items-center gap-2 px-6 py-4
                 bg-slate-800 hover:bg-slate-700 text-white 
                 rounded-xl font-bold text-sm shadow-xl border border-white/10
-                transition-all hover:scale-105
+                transition-all hover:scale-105 hover:shadow-${mainColor}-500/20
             `}
           >
-            <Activity size={16} className="text-emerald-400" />
-            Ver Evidências
+            <Activity size={18} className="text-emerald-400" />
+            Visualizar Evidência Técnica
           </button>
       )}
 
       {/* EVIDENCE OVERLAY */}
       <div className={`
-        absolute inset-0 bg-slate-900/95 backdrop-blur-md z-40 flex flex-col
+        absolute inset-0 bg-slate-900/98 backdrop-blur-xl z-40 flex flex-col
         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
         ${showEvidence ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'}
       `}>
           {/* Evidence Header */}
-          <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-             <div className="flex gap-4">
-                {driver.evidence?.map((item, index) => (
-                    <button
-                        key={index}
-                        onClick={() => setActiveTab(index)}
-                        className={`
-                            flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono transition-all
-                            ${activeTab === index 
-                                ? `bg-${mainColor}-500/20 text-${mainColor}-400 border border-${mainColor}-500/50` 
-                                : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'}
-                        `}
-                    >
-                        {item.type === 'code' && <Code2 size={12} />}
-                        {item.type === 'log' && <Terminal size={12} />}
-                        {item.type === 'graph' && <BarChart3 size={12} />}
-                        {item.type === 'json' && <FileJson size={12} />}
-                        {item.title}
-                    </button>
-                ))}
+          <div className="p-6 md:p-8 border-b border-slate-800 flex justify-between items-center bg-slate-950/50">
+             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                <h3 className="text-lg font-bold text-white mr-4 flex items-center gap-2">
+                   <Activity size={20} className={`text-${mainColor}-400`} />
+                   Evidências: {driver.id}
+                </h3>
+                <div className="flex gap-2 flex-wrap">
+                  {driver.evidence?.map((item, index) => (
+                      <button
+                          key={index}
+                          onClick={() => setActiveTab(index)}
+                          className={`
+                              flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono transition-all
+                              ${activeTab === index 
+                                  ? `bg-${mainColor}-500/20 text-${mainColor}-400 border border-${mainColor}-500/50` 
+                                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800 border border-transparent'}
+                          `}
+                      >
+                          {item.type === 'code' && <Code2 size={14} />}
+                          {item.type === 'log' && <Terminal size={14} />}
+                          {item.type === 'graph' && <BarChart3 size={14} />}
+                          {item.type === 'json' && <FileJson size={14} />}
+                          {item.title}
+                      </button>
+                  ))}
+                </div>
              </div>
              <button 
                 onClick={() => setShowEvidence(false)}
                 className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors"
              >
-                <X size={20} />
+                <X size={24} />
              </button>
           </div>
 
           {/* Evidence Content */}
-          <div className="flex-1 p-6 overflow-hidden">
+          <div className="flex-1 p-6 md:p-8 overflow-hidden bg-black/20">
              {driver.evidence && renderEvidenceContent(driver.evidence[activeTab])}
           </div>
       </div>

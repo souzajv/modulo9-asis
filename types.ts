@@ -16,6 +16,7 @@ export interface BusinessDriver {
   id: string;
   title: string;
   shortDescription: string;
+  testScenario: string; // New field for specific test case
   fullDescription: string[];
   technicalDetails: string;
   metrics?: string;

@@ -7,6 +7,7 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
     id: 'DN1',
     title: 'Integridade dos Dados',
     shortDescription: 'Garantia de que todo dado trafegado é validado antes do processamento.',
+    testScenario: 'Deve rejeitar automaticamente payloads contendo anexos com Base64 corrompido ou JSON malformado (HTTP 422).',
     fullDescription: [
       'Validação estrita de Schemas JSON na entrada da API.',
       'Critério de Aceite: 100% dos uploads corrompidos retornam HTTP 4xx.',
@@ -88,6 +89,7 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
     id: 'DN2',
     title: 'Não Repúdio',
     shortDescription: 'Rastreabilidade forense das transações.',
+    testScenario: 'Cada transação deve gerar um Hash SHA-256 único do payload original, persistido antes de qualquer processamento.',
     fullDescription: [
       'Implementação de logs imutáveis que registram a origem e o conteúdo exato de cada requisição.',
       'Garantia de que nenhuma transação fiscal possa ser contestada por falta de evidência técnica.',
@@ -101,6 +103,7 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
     id: 'DN3',
     title: 'Precisão Tributária',
     shortDescription: 'Exatidão decimal nos cálculos fiscais.',
+    testScenario: 'Cálculos de alíquotas complexas (ex: 13.3333%) devem manter precisão de 10 casas decimais sem erros de ponto flutuante.',
     fullDescription: [
       'Blindagem da lógica de negócio contra erros de arredondamento (Floating Point Errors).',
       'Testes unitários cobrindo cenários de borda e alíquotas complexas.',
@@ -114,6 +117,7 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
     id: 'DN4',
     title: 'Disponibilidade',
     shortDescription: 'Monitoramento ativo de Uptime e Saúde da API.',
+    testScenario: 'O endpoint /health deve retornar HTTP 200 em menos de 200ms, mesmo com carga simulada de 20 usuários simultâneos.',
     fullDescription: [
       'Implementação de endpoints de Health Check (Liveness/Readiness).',
       'Monitoramento sintético para alertar indisponibilidade antes do usuário final perceber.',
@@ -170,7 +174,8 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
   {
     id: 'DN5',
     title: 'Resiliência e Volumetria',
-    shortDescription: 'Estabilidade sob picos de demanda (600 RPM).',
+    shortDescription: 'Estabilidade sob picos de demanda.',
+    testScenario: 'O sistema deve aplicar Throttling (HTTP 429) imediatamente ao ultrapassar o limite de 600 requisições por minuto.',
     fullDescription: [
       'Suporte a 600 RPM com latência < 400ms (p95).',
       'Mecanismo de Rate Limiting retornando HTTP 429 para proteger a infraestrutura.',
