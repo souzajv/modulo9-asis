@@ -6,6 +6,7 @@ import StatusReport from './StatusReport';
 import DriverCard from './DriverCard';
 import NextSteps from './NextSteps';
 import TeamSection from './TeamSection';
+import GroupPhotoSection from './GroupPhotoSection';
 import FloatingParallax from './FloatingParallax';
 import { BUSINESS_DRIVERS } from '../constants';
 
@@ -154,7 +155,12 @@ const HorizontalContainer: React.FC = () => {
             <TeamSection />
         </div>
 
-        {/* 6. Final Footer */}
+        {/* 6. Group Photo (NEW) */}
+        <div className="w-[100vw] h-screen flex-shrink-0">
+            <GroupPhotoSection />
+        </div>
+
+        {/* 7. Final Footer */}
         <div className="w-[100vw] h-screen flex flex-col items-center justify-center flex-shrink-0 relative z-10 bg-gradient-to-l from-slate-950 to-transparent">
           <div className="text-center z-10">
              <h2 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500 mb-6">
