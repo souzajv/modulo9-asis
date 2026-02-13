@@ -9,7 +9,7 @@ const GroupPhotoSection: React.FC = () => {
         <div className="flex-1 relative rounded-3xl overflow-hidden border border-slate-700 shadow-2xl group bg-slate-900/50">
             {/* Referencing the image from public folder */}
             <img 
-                src="../public/grupo.jpeg" 
+                src="public/grupo.jpeg" 
                 alt="Grupo 2 - Inteli x ASIS" 
                 className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
             />
