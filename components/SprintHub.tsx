@@ -241,9 +241,9 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
 
       {/* VIEW: SPRINTS FULL SCREEN OVERLAY */}
       {view === 'SPRINTS' && (
-        <div className="sprints-overlay fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-[2px] flex flex-col p-8 md:p-16 opacity-0">
+        <div className="sprints-overlay fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-[2px] flex flex-col p-6 md:p-12 opacity-0">
             {/* Overlay Header */}
-            <div className="nav-back flex justify-between items-center mb-8 border-b border-emerald-500/20 pb-6 opacity-0">
+            <div className="nav-back flex justify-between items-center mb-6 border-b border-emerald-500/20 pb-4 opacity-0">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-500">
                         <FolderOpen size={24} />
@@ -266,8 +266,8 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
             </div>
 
             {/* Grid Container - Centered and constrained to avoid scroll if possible */}
-            <div className="flex-1 flex items-center justify-center overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
+            <div className="flex-1 flex items-start justify-center overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl pt-4">
                     {SPRINTS.map((sprint) => (
                         <div 
                             key={sprint.id}
