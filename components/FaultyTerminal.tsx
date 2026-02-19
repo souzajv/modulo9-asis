@@ -296,7 +296,7 @@ export default function FaultyTerminal({
     const renderer = new Renderer({ dpr, alpha: true });
     rendererRef.current = renderer;
     const gl = renderer.gl;
-    gl.clearColor(0, 0, 0, 0); // Transparent background to blend if needed, though shader is solid usually
+    gl.clearColor(0, 0, 0, 0); // Transparent background
 
     const geometry = new Triangle(gl);
 
@@ -352,6 +352,11 @@ export default function FaultyTerminal({
     const update = (t: number) => {
       rafRef.current = requestAnimationFrame(update);
 
+      // PERFORMANCE OPTIMIZATION:
+      // If the tab is hidden (user switched tabs), stop rendering the shader entirely.
+      // This saves massive amounts of GPU usage and battery.
+      if (document.hidden) return;
+
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
       }
@@ -389,7 +394,6 @@ export default function FaultyTerminal({
     ctn.appendChild(gl.canvas);
 
     if (mouseReact) {
-        // Use window listener for background effect to catch all movements
         window.addEventListener('mousemove', handleMouseMove);
     }
 

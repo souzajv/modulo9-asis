@@ -24,33 +24,52 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     const card = cardRef.current;
     if (!card) return;
 
+    // Optimization: Do not run tilt logic on mobile devices
+    if (window.matchMedia("(hover: none) and (pointer: coarse)").matches) {
+        return;
+    }
+
     // If evidence is open, remove tilt to allow interaction
     if (showEvidence) {
       gsap.to(card, { rotationX: 0, rotationY: 0, ease: "power2.out", duration: 0.5 });
       return;
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      
-      const rotateX = ((y - centerY) / centerY) * -2; // Reduced rotation for wider card
-      const rotateY = ((x - centerX) / centerX) * 2;
+    let rafId: number | null = null;
 
-      gsap.to(card, {
-        rotationX: rotateX,
-        rotationY: rotateY,
-        transformPerspective: 1000,
-        ease: "power1.out",
-        duration: 0.5
+    const handleMouseMove = (e: MouseEvent) => {
+      // Optimization: Throttle the calculation to the animation frame
+      // This prevents the browser from recalculating layout on every single pixel movement
+      if (rafId) return;
+
+      rafId = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = ((y - centerY) / centerY) * -2; // Reduced rotation for wider card
+        const rotateY = ((x - centerX) / centerX) * 2;
+  
+        gsap.to(card, {
+          rotationX: rotateX,
+          rotationY: rotateY,
+          transformPerspective: 1000,
+          ease: "power1.out",
+          duration: 0.5
+        });
+
+        rafId = null;
       });
     };
 
     const handleMouseLeave = () => {
+      if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+      }
       gsap.to(card, {
         rotationX: 0,
         rotationY: 0,
@@ -63,6 +82,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     card.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       card.removeEventListener('mousemove', handleMouseMove);
       card.removeEventListener('mouseleave', handleMouseLeave);
     };

@@ -114,8 +114,9 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
       </div>
 
       {/* VIEW: MAIN MENU (Always rendered, covered when Sprints active) */}
-      <div className={`w-full h-full overflow-y-auto no-scrollbar transition-opacity duration-500 ${view === 'SPRINTS' ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <div className="min-h-full flex flex-col items-center justify-center">
+      {/* OPTIMIZATION: Use 'invisible' instead of just opacity-0 to remove from paint cycle when obscured */}
+      <div className={`w-full h-full overflow-y-auto no-scrollbar transition-opacity duration-500 ${view === 'SPRINTS' ? 'opacity-0 invisible' : 'opacity-100 visible'}`}>
+          <div className="min-h-full flex flex-col items-center justify-center p-8 md:p-16 pb-32">
             
             {/* Header */}
             <div className="hub-header w-full max-w-6xl mb-16 relative z-10 invisible">
