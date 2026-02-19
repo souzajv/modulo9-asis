@@ -3,6 +3,7 @@ import HorizontalContainer from './components/HorizontalContainer';
 import FaultyTerminal from './components/FaultyTerminal';
 import GeminiAssistant from './components/GeminiAssistant';
 import SprintHub from './components/SprintHub';
+import CustomCursor from './components/CustomCursor';
 
 type ViewState = 'HUB' | 'SPRINT_1';
 
@@ -61,6 +62,8 @@ function App() {
 
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-50 selection:bg-emerald-500/30 overflow-x-hidden">
+      <CustomCursor />
+      
       <div className="fixed inset-0 z-0">
         <FaultyTerminal
           scale={1.5}
