@@ -95,11 +95,6 @@ float fbm(vec2 p)
   
   mat2 modify1 = rotate(time * 0.02);
   f += amp * noise(p);
-  p = modify1 * p * 2.0;
-  amp *= 0.454545;
-  
-  mat2 modify2 = rotate(time * 0.08);
-  f += amp * noise(p);
   
   return f;
 }
@@ -187,12 +182,11 @@ vec3 getColor(vec2 p){
 
     float middle = digit(p);
     
-    const float off = 0.002;
-    float sum = digit(p + vec2(-off, -off)) + digit(p + vec2(0.0, -off)) + digit(p + vec2(off, -off)) +
-                digit(p + vec2(-off, 0.0)) + digit(p + vec2(0.0, 0.0)) + digit(p + vec2(off, 0.0)) +
-                digit(p + vec2(-off, off)) + digit(p + vec2(0.0, off)) + digit(p + vec2(off, off));
-    
-    vec3 baseColor = vec3(0.9) * middle + sum * 0.1 * vec3(1.0) * bar;
+    // OPTIMIZATION: Single-tap rendering. 
+    // We removed the blur loop entirely to save GPU cycles.
+    // The "glow" is now just the raw pixel brightness boosted.
+    // Boosted from 1.8 to 3.0 to make pixels pop more.
+    vec3 baseColor = vec3(0.9) * middle * 3.0 * bar;
     return baseColor;
 }
 
@@ -259,7 +253,7 @@ export default function FaultyTerminal({
   tint = '#ffffff',
   mouseReact = true,
   mouseStrength = 0.2,
-  dpr = Math.min(window.devicePixelRatio || 1, 2),
+  dpr = 0.6, // Aggressive Optimization: Render at 60% resolution.
   pageLoadAnimation = true,
   brightness = 1,
   className,
@@ -273,6 +267,7 @@ export default function FaultyTerminal({
   const smoothMouseRef = useRef({ x: 0.5, y: 0.5 });
   const frozenTimeRef = useRef(0);
   const rafRef = useRef<number>(0);
+  const lastFrameTimeRef = useRef<number>(0);
   const loadAnimationStartRef = useRef<number>(0);
   const timeOffsetRef = useRef<number>(Math.random() * 100);
 
@@ -354,15 +349,26 @@ export default function FaultyTerminal({
 
       // PERFORMANCE OPTIMIZATION:
       // If the tab is hidden (user switched tabs), stop rendering the shader entirely.
-      // This saves massive amounts of GPU usage and battery.
       if (document.hidden) return;
+
+      // FPS LIMITER: Cap at ~30 FPS to save GPU
+      const targetFPS = 30;
+      const interval = 1000 / targetFPS;
+      const now = t;
+      const delta = now - (lastFrameTimeRef.current || 0);
+
+      if (delta < interval) return;
+
+      // Adjust for drift
+      lastFrameTimeRef.current = now - (delta % interval);
 
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
       }
 
       if (!pause) {
-        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
+        // SLOW DOWN FACTOR: Multiply by 0.3 to slow down the glitch/animation speed
+        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale * 0.3;
         program.uniforms.iTime.value = elapsed;
         frozenTimeRef.current = elapsed;
       } else {

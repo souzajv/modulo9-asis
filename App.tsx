@@ -69,20 +69,20 @@ function App() {
           scale={1.5}
           gridMul={[2, 1]}
           digitSize={1.2}
-          timeScale={0.5}
+          timeScale={0.15} // Slowed down from 0.5 to 0.15
           pause={false}
-          scanlineIntensity={0.5}
-          glitchAmount={isTransitioning ? 3.0 : 1.0} // Glitch effect on transition
+          scanlineIntensity={1.0} // Increased for visibility
+          glitchAmount={isTransitioning ? 3.0 : 1.0} 
           flickerAmount={0.3}
           noiseAmp={0.5}
-          chromaticAberration={isTransitioning ? 5.0 : 0.2} // Aberration on transition
+          chromaticAberration={isTransitioning ? 5.0 : 0.2}
           dither={0.2}
           curvature={0.1}
-          tint="#059669" // Emerald 600
+          tint="#10b981" // Brighter Emerald 500
           mouseReact={true}
           mouseStrength={0.5}
           pageLoadAnimation={true}
-          brightness={0.3}
+          brightness={0.8} // Increased brightness
         />
       </div>
 
