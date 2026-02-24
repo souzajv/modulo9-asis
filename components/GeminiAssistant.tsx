@@ -71,13 +71,13 @@ const GeminiAssistant: React.FC = () => {
       {/* Floating Trigger */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bg-emerald-600 text-white`}
+        className={`fixed bottom-6 right-6 z-50 p-4 rounded-none shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all duration-300 hover:scale-110 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bg-emerald-600 text-white`}
       >
         <MessageSquare size={24} />
       </button>
 
       {/* Chat Interface */}
-      <div className={`fixed bottom-6 right-6 z-50 w-80 md:w-96 bg-slate-900 border border-emerald-500/30 rounded-2xl shadow-2xl transition-all duration-500 transform origin-bottom-right flex flex-col overflow-hidden ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-10 pointer-events-none'}`} style={{ height: '500px' }}>
+      <div className={`fixed bottom-6 right-6 z-50 w-80 md:w-96 bg-slate-900 border border-emerald-500/30 rounded-none shadow-2xl transition-all duration-500 transform origin-bottom-right flex flex-col overflow-hidden ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-10 pointer-events-none'}`} style={{ height: '500px' }}>
         
         {/* Header */}
         <div className="bg-slate-800 p-4 flex justify-between items-center border-b border-slate-700">
@@ -94,10 +94,10 @@ const GeminiAssistant: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-950/50">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
+              <div className={`max-w-[80%] rounded-none px-4 py-2 text-sm ${
                 msg.role === 'user' 
-                  ? 'bg-emerald-600 text-white rounded-br-none' 
-                  : 'bg-slate-800 text-slate-200 rounded-bl-none border border-slate-700'
+                  ? 'bg-emerald-600 text-white rounded-none' 
+                  : 'bg-slate-800 text-slate-200 rounded-none border border-slate-700'
               }`}>
                 {msg.text}
               </div>
@@ -105,7 +105,7 @@ const GeminiAssistant: React.FC = () => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-slate-800 rounded-2xl px-4 py-2 rounded-bl-none border border-slate-700">
+              <div className="bg-slate-800 rounded-none px-4 py-2 rounded-none border border-slate-700">
                 <div className="flex gap-1">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                   <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
@@ -125,12 +125,12 @@ const GeminiAssistant: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Pergunte sobre a Sprint..."
-            className="flex-1 bg-slate-800 text-white text-sm rounded-xl px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500 border border-slate-700"
+            className="flex-1 bg-slate-800 text-white text-sm rounded-none px-4 py-2 focus:outline-none focus:ring-1 focus:ring-emerald-500 border border-slate-700"
           />
           <button 
             onClick={handleSend}
             disabled={isLoading}
-            className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-500 transition-colors disabled:opacity-50"
+            className="p-2 bg-emerald-600 text-white rounded-none hover:bg-emerald-500 transition-colors disabled:opacity-50"
           >
             <Send size={18} />
           </button>

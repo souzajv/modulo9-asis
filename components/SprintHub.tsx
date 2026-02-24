@@ -125,7 +125,7 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                     <div className="flex flex-col">
                         <span className="text-[10px] text-emerald-500 font-mono tracking-[0.2em] mb-1">INSTITUTO DE TECNOLOGIA E LIDERANÇA</span>
                         <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-sm"></span>
+                            <span className="w-2 h-2 bg-emerald-500 rounded-none"></span>
                             <span className="text-white font-bold tracking-widest text-sm">INTELI</span>
                         </div>
                     </div>
@@ -137,7 +137,7 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                         <div className="h-8 w-[1px] bg-emerald-500/30 mx-2"></div>
                         <div className="relative group cursor-default">
                              <div className="absolute inset-0 bg-emerald-500/20 blur-xl rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                             <div className="relative border border-emerald-500/50 bg-slate-900/80 px-4 py-2 rounded-lg flex items-center gap-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                             <div className="relative border border-emerald-500/50 bg-slate-900/80 px-4 py-2 rounded-none flex items-center gap-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
                                 <Hexagon size={20} className="text-emerald-400 fill-emerald-500/10" strokeWidth={1.5} />
                                 <div>
                                     <span className="block text-[10px] text-slate-400 font-mono leading-none mb-1">SQUAD</span>
@@ -182,12 +182,12 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                      {/* 1. Presentations Folder */}
                      <div 
                         onClick={() => setView('SPRINTS')}
-                        className="menu-card group cursor-pointer relative p-8 rounded-3xl border border-slate-800 bg-slate-900/40 hover:bg-emerald-950/20 hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-2 opacity-0"
+                        className="menu-card group cursor-pointer relative p-8 rounded-none border border-slate-800 bg-slate-900/40 hover:bg-emerald-950/20 hover:border-emerald-500/50 transition-all duration-300 hover:-translate-y-2 opacity-0"
                      >
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                             <CornerUpLeft className="text-emerald-500 rotate-180" size={20} />
                         </div>
-                        <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 text-emerald-500 border border-slate-700 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-all">
+                        <div className="w-16 h-16 bg-slate-800 rounded-none flex items-center justify-center mb-6 text-emerald-500 border border-slate-700 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-all">
                             <FolderOpen size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">Apresentações</h3>
@@ -200,9 +200,9 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                      </div>
 
                      {/* 2. Dashboard (Mocked) */}
-                     <div className="menu-card group relative p-8 rounded-3xl border border-slate-800 bg-slate-900/20 opacity-75 cursor-not-allowed opacity-0">
-                        <div className="absolute top-4 right-4 px-2 py-1 bg-slate-800 rounded text-[10px] font-bold text-slate-500">EM BREVE</div>
-                        <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-6 text-slate-600 border border-slate-700">
+                     <div className="menu-card group relative p-8 rounded-none border border-slate-800 bg-slate-900/20 opacity-75 cursor-not-allowed opacity-0">
+                        <div className="absolute top-4 right-4 px-2 py-1 bg-slate-800 rounded-none text-[10px] font-bold text-slate-500">EM BREVE</div>
+                        <div className="w-16 h-16 bg-slate-800/50 rounded-none flex items-center justify-center mb-6 text-slate-600 border border-slate-700">
                             <LayoutDashboard size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-500 mb-2">Dashboard</h3>
@@ -219,12 +219,12 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                         href="https://git.inteli.edu.br/graduacao/2026-1a/t13/g02"
                         target="_blank" 
                         rel="noreferrer"
-                        className="menu-card group cursor-pointer relative p-8 rounded-3xl border border-slate-800 bg-slate-900/40 hover:bg-indigo-950/20 hover:border-indigo-500/50 transition-all duration-300 hover:-translate-y-2 opacity-0"
+                        className="menu-card group cursor-pointer relative p-8 rounded-none border border-slate-800 bg-slate-900/40 hover:bg-indigo-950/20 hover:border-indigo-500/50 transition-all duration-300 hover:-translate-y-2 opacity-0"
                      >
                          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                             <ExternalLink className="text-indigo-500" size={20} />
                         </div>
-                        <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 text-indigo-400 border border-slate-700 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all">
+                        <div className="w-16 h-16 bg-slate-800 rounded-none flex items-center justify-center mb-6 text-indigo-400 border border-slate-700 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-all">
                             <GitBranch size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">Repositório Git</h3>
@@ -246,7 +246,7 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
             {/* Overlay Header */}
             <div className="nav-back flex justify-between items-center mb-6 border-b border-emerald-500/20 pb-4 opacity-0">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20 text-emerald-500">
+                    <div className="p-2 bg-emerald-500/10 rounded-none border border-emerald-500/20 text-emerald-500">
                         <FolderOpen size={24} />
                     </div>
                     <div>
@@ -260,7 +260,7 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                     className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
                 >
                     <span className="text-xs font-bold tracking-widest hidden md:block">FECHAR</span>
-                    <div className="p-2 bg-slate-800 rounded-full group-hover:bg-emerald-600 transition-colors">
+                    <div className="p-2 bg-slate-800 rounded-none group-hover:bg-emerald-600 transition-colors">
                         <X size={16} />
                     </div>
                 </button>
@@ -274,7 +274,7 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                             key={sprint.id}
                             onClick={() => sprint.status === 'COMPLETED' && onSelectSprint(sprint.id)}
                             className={`
-                                sprint-card group relative p-6 rounded-2xl border transition-all duration-300 opacity-0
+                                sprint-card group relative p-6 rounded-none border transition-all duration-300 opacity-0
                                 ${sprint.status === 'COMPLETED' 
                                     ? 'bg-slate-900/90 border-emerald-500/30 hover:border-emerald-400 hover:bg-slate-800 hover:-translate-y-1 cursor-pointer shadow-[0_0_30px_-10px_rgba(16,185,129,0.1)]' 
                                     : 'bg-slate-950/80 border-slate-800/50 cursor-not-allowed'}
@@ -282,13 +282,13 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                         >
                             {/* Hover Glow Effect for Active Card */}
                             {sprint.status === 'COMPLETED' && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-none" />
                             )}
 
                             <div className={`flex items-start justify-between relative z-10 ${sprint.status !== 'COMPLETED' ? 'opacity-40 grayscale' : ''} mb-6`}>
                                 <div className="flex items-start gap-4">
                                     <div className={`
-                                        w-12 h-12 rounded-lg flex items-center justify-center font-bold text-lg font-mono flex-shrink-0
+                                        w-12 h-12 rounded-none flex items-center justify-center font-bold text-lg font-mono flex-shrink-0
                                         ${sprint.status === 'COMPLETED' 
                                             ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
                                             : 'bg-slate-900 text-slate-600 border border-slate-800'}
@@ -307,11 +307,11 @@ const SprintHub: React.FC<SprintHubProps> = ({ onSelectSprint }) => {
                                 </div>
 
                                 {sprint.status === 'COMPLETED' ? (
-                                    <div className="p-2 bg-emerald-500 rounded-full text-black transform group-hover:rotate-[-45deg] transition-transform duration-300">
+                                    <div className="p-2 bg-emerald-500 rounded-none text-black transform group-hover:rotate-[-45deg] transition-transform duration-300">
                                         <ArrowRight size={16} />
                                     </div>
                                 ) : (
-                                    <div className="p-2 bg-slate-800 rounded-full text-slate-600">
+                                    <div className="p-2 bg-slate-800 rounded-none text-slate-600">
                                         <Lock size={16} />
                                     </div>
                                 )}

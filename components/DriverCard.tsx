@@ -91,14 +91,14 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
   const renderEvidenceContent = (evidence: any) => {
     if (evidence.type === 'code') {
       return (
-        <pre className="font-mono text-xs text-slate-300 bg-slate-950/50 p-4 rounded-lg overflow-x-auto border border-slate-800 h-full">
+        <pre className="font-mono text-xs text-slate-300 bg-slate-950/50 p-4 rounded-none overflow-x-auto border border-slate-800 h-full">
           <code>{evidence.content}</code>
         </pre>
       );
     }
     if (evidence.type === 'log') {
       return (
-        <div className="font-mono text-xs text-green-400 bg-black p-4 rounded-lg h-full border border-slate-800 overflow-y-auto">
+        <div className="font-mono text-xs text-green-400 bg-black p-4 rounded-none h-full border border-slate-800 overflow-y-auto">
           {evidence.content?.split('\n').map((line: string, i: number) => (
             <div key={i} className="mb-1">
               <span className="text-slate-600 mr-2">$</span>
@@ -112,7 +112,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     }
     if (evidence.type === 'json') {
       return (
-        <div className="font-mono text-xs bg-slate-900 p-4 rounded-lg h-full overflow-y-auto border border-slate-800">
+        <div className="font-mono text-xs bg-slate-900 p-4 rounded-none h-full overflow-y-auto border border-slate-800">
           <pre className={evidence.data._response?.status >= 400 ? 'text-red-300' : 'text-emerald-300'}>
             {JSON.stringify(evidence.data, null, 2)}
           </pre>
@@ -122,7 +122,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
     if (evidence.type === 'graph') {
         const { labels, datasets } = evidence.data;
         return (
-            <div className="w-full h-full bg-slate-900/50 rounded-lg p-4 border border-slate-800 flex flex-col">
+            <div className="w-full h-full bg-slate-900/50 rounded-none p-4 border border-slate-800 flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                     <h4 className="text-xs font-bold text-slate-400 uppercase">Performance vs Carga</h4>
                     <div className="flex gap-4">
@@ -177,7 +177,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
         relative w-[90vw] lg:w-[1100px]
         ${showEvidence ? 'h-[80vh]' : 'h-auto min-h-[600px]'}
         bg-slate-900/80 backdrop-blur-xl border border-white/5
-        rounded-[2rem] p-8 md:p-12 flex flex-col justify-center
+        rounded-none p-8 md:p-12 flex flex-col justify-center
         shadow-2xl ${glowColor}
         group transition-all duration-500
         overflow-hidden
@@ -199,14 +199,14 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                 <div>
                   <div className="flex justify-between items-start mb-8">
                     <div className={`
-                      p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm
+                      p-4 rounded-none border border-white/10 bg-white/5 backdrop-blur-sm
                       ${textColor} shadow-[0_0_30px_-5px_rgba(0,0,0,0.3)]
                     `}>
                       {getIcon(driver.icon, "w-10 h-10")}
                     </div>
                     
                     <div className={`
-                      px-4 py-2 rounded-full text-xs font-bold tracking-widest border flex items-center gap-2
+                      px-4 py-2 rounded-none text-xs font-bold tracking-widest border flex items-center gap-2
                       ${isImplemented 
                         ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
                         : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'}
@@ -234,7 +234,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                      <span className="text-xs font-mono tracking-[0.2em] text-slate-500 uppercase">Stack Técnica</span>
                    </div>
                    <div className={`
-                     font-mono text-xs ${textColor} bg-black/40 p-4 rounded-xl border border-white/5
+                     font-mono text-xs ${textColor} bg-black/40 p-4 rounded-none border border-white/5
                      relative overflow-hidden
                    `}>
                      <div className={`absolute left-0 top-0 w-1 h-full bg-${mainColor}-500`} />
@@ -244,17 +244,17 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
              </div>
 
              {/* RIGHT COLUMN: Test Scenario & Details */}
-             <div className="lg:col-span-7 flex flex-col justify-center h-full space-y-8 bg-slate-950/30 p-8 rounded-3xl border border-white/5">
+             <div className="lg:col-span-7 flex flex-col justify-center h-full space-y-8 bg-slate-950/30 p-8 rounded-none border border-white/5">
                 
                 {/* TEST CASE HIGHLIGHT */}
                 <div className="relative group/test">
-                   <div className={`absolute -left-1 top-0 h-full w-1 bg-${mainColor}-500 rounded-full`}></div>
+                   <div className={`absolute -left-1 top-0 h-full w-1 bg-${mainColor}-500 rounded-none`}></div>
                    <div className="pl-6">
                       <div className="flex items-center gap-2 text-slate-400 mb-2">
                         <FlaskConical size={16} className={`text-${mainColor}-400`} />
                         <span className="text-xs font-mono uppercase tracking-widest">Cenário de Teste / Aceite</span>
                       </div>
-                      <p className="font-mono text-sm md:text-base text-slate-200 leading-relaxed bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                      <p className="font-mono text-sm md:text-base text-slate-200 leading-relaxed bg-slate-900/50 p-4 rounded-none border border-slate-800">
                          <span className="text-slate-500 select-none mr-2">$</span>
                          {driver.testScenario}
                       </p>
@@ -265,7 +265,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                 <div className="space-y-4">
                     {driver.fullDescription.map((desc, i) => (
                       <div key={i} className="flex items-start gap-4 text-slate-400 text-sm md:text-base group/item hover:text-slate-200 transition-colors">
-                        <div className={`mt-2 min-w-[6px] h-[6px] rounded-full bg-${mainColor}-500/50 group-hover/item:bg-${mainColor}-400 transition-colors`} />
+                        <div className={`mt-2 min-w-[6px] h-[6px] rounded-none bg-${mainColor}-500/50 group-hover/item:bg-${mainColor}-400 transition-colors`} />
                         <p>{desc}</p>
                       </div>
                     ))}
@@ -278,7 +278,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                     <span className="text-[10px] font-mono tracking-[0.2em] text-slate-500 uppercase">Implementação</span>
                   </div>
                   <div className={`
-                    font-mono text-[10px] ${textColor} bg-black/40 p-3 rounded-xl border border-white/5
+                    font-mono text-[10px] ${textColor} bg-black/40 p-3 rounded-none border border-white/5
                   `}>
                     {driver.technicalDetails}
                   </div>
@@ -296,7 +296,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                 absolute bottom-8 right-8 z-30
                 flex items-center gap-2 px-6 py-4
                 bg-slate-800 hover:bg-slate-700 text-white 
-                rounded-xl font-bold text-sm shadow-xl border border-white/10
+                rounded-none font-bold text-sm shadow-xl border border-white/10
                 transition-all hover:scale-105 hover:shadow-${mainColor}-500/20
             `}
           >
@@ -324,7 +324,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
                           key={index}
                           onClick={() => setActiveTab(index)}
                           className={`
-                              flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono transition-all
+                              flex items-center gap-2 px-4 py-2 rounded-none text-xs font-mono transition-all
                               ${activeTab === index 
                                   ? `bg-${mainColor}-500/20 text-${mainColor}-400 border border-${mainColor}-500/50` 
                                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800 border border-transparent'}
@@ -341,7 +341,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
              </div>
              <button 
                 onClick={() => setShowEvidence(false)}
-                className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors"
+                className="p-2 hover:bg-slate-800 rounded-none text-slate-400 hover:text-white transition-colors"
              >
                 <X size={24} />
              </button>

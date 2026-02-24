@@ -41,7 +41,7 @@ const HeroSection: React.FC = () => {
 
       <div className="z-10 max-w-5xl">
         <div ref={badgeRef} className="flex flex-wrap items-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-950/30 border border-emerald-900/50 rounded-full text-emerald-400">
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-950/30 border border-emerald-900/50 rounded-none text-emerald-400">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -49,7 +49,7 @@ const HeroSection: React.FC = () => {
             <span className="text-xs font-mono font-bold tracking-wider">LIVE SPRINT REVIEW</span>
           </div>
 
-          <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400">
+          <div className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-none text-indigo-400">
             <Users size={14} />
             <span className="text-xs font-mono font-bold tracking-wider">GRUPO 02</span>
           </div>
@@ -70,8 +70,8 @@ const HeroSection: React.FC = () => {
             
             <div className="flex flex-wrap gap-6 items-center">
               <div className="flex -space-x-4">
-                 <div className="w-12 h-12 rounded-full bg-slate-800 border-4 border-[#020617] flex items-center justify-center text-xs font-bold text-white z-10">INT</div>
-                 <div className="w-12 h-12 rounded-full bg-emerald-900 border-4 border-[#020617] flex items-center justify-center text-xs font-bold text-emerald-100 z-0">ASIS</div>
+                 <div className="w-12 h-12 rounded-none bg-slate-800 border-4 border-[#020617] flex items-center justify-center text-xs font-bold text-white z-10">INT</div>
+                 <div className="w-12 h-12 rounded-none bg-emerald-900 border-4 border-[#020617] flex items-center justify-center text-xs font-bold text-emerald-100 z-0">ASIS</div>
               </div>
               <div className="h-8 w-[1px] bg-slate-800"></div>
               <div className="flex gap-2 text-sm font-mono text-slate-500">

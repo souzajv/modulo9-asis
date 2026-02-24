@@ -63,14 +63,14 @@ const CustomCursor: React.FC = () => {
       {/* Central Dot - Precision */}
       <div 
         ref={cursorRef} 
-        className="fixed top-0 left-0 w-2 h-2 bg-emerald-400 rounded-full pointer-events-none z-[9999] mix-blend-difference -translate-x-1/2 -translate-y-1/2"
+        className="fixed top-0 left-0 w-2 h-2 bg-emerald-400 rounded-none pointer-events-none z-[9999] mix-blend-difference -translate-x-1/2 -translate-y-1/2"
       />
       
       {/* Follower Ring - Interaction */}
       <div 
         ref={followerRef} 
         className={`
-          fixed top-0 left-0 border border-emerald-500/50 rounded-full pointer-events-none z-[9998] 
+          fixed top-0 left-0 border border-emerald-500/50 rounded-none pointer-events-none z-[9998] 
           -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out
           ${isHovering ? 'w-12 h-12 bg-emerald-500/10 border-emerald-400' : 'w-6 h-6'}
         `}

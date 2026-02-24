@@ -185,8 +185,8 @@ vec3 getColor(vec2 p){
     // OPTIMIZATION: Single-tap rendering. 
     // We removed the blur loop entirely to save GPU cycles.
     // The "glow" is now just the raw pixel brightness boosted.
-    // Boosted from 1.8 to 3.0 to make pixels pop more.
-    vec3 baseColor = vec3(0.9) * middle * 3.0 * bar;
+    // Reduced from 3.0 to 1.5 to improve contrast with foreground content.
+    vec3 baseColor = vec3(0.5) * middle * 1.5 * bar;
     return baseColor;
 }
 
