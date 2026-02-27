@@ -368,8 +368,8 @@ export const NEXT_SPRINT_DELIVERABLES = [
 
 export const SPRINT_3_DELIVERABLES = [
   {
-    title: "Integração e Segurança Avançada",
-    desc: "Integração completa com sistemas legados e hardening de segurança (OAuth2/mTLS)."
+    title: "ESPECIFICAÇÃO DA SOLUÇÃO TÉCNICA COMO CÓDIGO",
+    desc: "Documento de Integração como ativo: mapa de 5 integrações com versionamento sincronizado (3.0 pts), implementação e ajustes das integrações (2.0 pts) e instrumentação em código para aferição/observabilidade das integrações (5.0 pts)."
   },
   {
     title: "Observabilidade Total",
