@@ -34,6 +34,7 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprin
       { src: '/5.jpeg', label: 'Evidência 05' },
       { src: '/6.jpeg', label: 'Evidência 06' },
       { src: '/7.jpeg', label: 'Evidência 07' },
+      { src: '/parcial.jpeg', label: 'Evidência Parcial' },
       { src: '/8.jpeg', label: 'Evidência 08' },
       { src: '/9.jpeg', label: 'Evidência 09' },
       { src: '/10.jpeg', label: 'Evidência 10' },
