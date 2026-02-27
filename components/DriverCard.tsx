@@ -178,7 +178,7 @@ const DriverCard: React.FC<Props> = ({ driver }) => {
         ${showEvidence ? 'h-[80vh]' : 'h-auto min-h-[600px]'}
         bg-slate-900/80 backdrop-blur-xl border border-white/5
         rounded-none p-8 md:p-12 flex flex-col justify-center
-        shadow-2xl ${glowColor}
+        shadow-2xl ${glowColor} shadow-[0_30px_120px_rgba(16,185,129,0.25)]
         group transition-all duration-500
         overflow-hidden
       `}
