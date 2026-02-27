@@ -114,10 +114,10 @@ const StatusReportSprint2: React.FC = () => {
                      <AlertCircle size={32} />
                  </div>
                  <div>
-                     <h3 className="text-lg font-bold text-white mb-1">Próximo Desafio: Integração Legada</h3>
-                     <p className="text-slate-400 text-sm">
-                         A Sprint 03 focará na integração profunda com os sistemas legados da ASIS e hardening de segurança (OAuth2/mTLS).
-                     </p>
+                    <h3 className="text-lg font-bold text-white mb-1">Próximo Desafio: Integração e Observabilidade</h3>
+                    <p className="text-slate-400 text-sm">
+                        A Sprint 03 focará na integração profunda com os sistemas legados da ASIS, hardening de segurança (OAuth2/mTLS), instrumentação de observabilidade (dashboards) e validação de resiliência via caos controlado.
+                    </p>
                  </div>
             </div>
 
