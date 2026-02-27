@@ -187,6 +187,160 @@ export const BUSINESS_DRIVERS: BusinessDriver[] = [
   }
 ];
 
+export const SPRINT_2_DRIVERS: BusinessDriver[] = [
+  {
+    id: 'DN1',
+    title: 'Não Repúdio e Integridade',
+    shortDescription: 'Upload seguro e validação estrutural de payloads.',
+    testScenario: 'Upload deve registrar process_id/hash; Validação deve bloquear violações estruturais (4xx).',
+    fullDescription: [
+      'RF: Upload de não-repúdio registra process_id, hash do arquivo e credenciais no log.',
+      'RNF: Validação estrutural contra regra de integridade (IDs, timestamps, anexos base64).',
+      'Bloqueio automático de violações antes do processamento.'
+    ],
+    technicalDetails: 'test_nao_repudio.py, integrity_checker.py',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'shield',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Validação de Integridade',
+        language: 'python',
+        content: `def validate_integrity(payload):
+    # RNF: Validação estrutural dos payloads
+    if not payload.get('process_id'):
+        raise ValidationError("Missing process_id")
+    
+    # Validação de anexos Base64
+    for attachment in payload.get('attachments', []):
+        if not is_valid_base64(attachment['content']):
+            return HTTP_422("Invalid Base64")
+            
+    return HTTP_200`
+      },
+      {
+        type: 'log',
+        title: 'Log de Não-Repúdio',
+        content: `[INFO] Upload recebido: /nao_repudio/upload
+[AUDIT] ProcessID: PROC-9982
+[AUDIT] FileHash: sha256:a1b2c3d4...
+[AUDIT] Credentials: Verified (User: admin)`
+      }
+    ]
+  },
+  {
+    id: 'DN2',
+    title: 'Rastreabilidade e Auditoria',
+    shortDescription: 'Logs estruturados e Request IDs únicos para rastreio.',
+    testScenario: 'Toda requisição gera request_id único e logs JSON auditáveis.',
+    fullDescription: [
+      'RF: Geração de request_id único e log de método/URL/headers antes do envio.',
+      'RNF: Logs de auditoria em JSON contendo request/response, timestamps e status.',
+      'Garantia de rastreabilidade e não repúdio.'
+    ],
+    technicalDetails: 'api_client.py, logger.py, test_non_repudiation.py',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'lock',
+    evidence: [
+      {
+        type: 'json',
+        title: 'Log Estruturado (JSON)',
+        data: {
+          "timestamp": "2026-02-27T10:00:00Z",
+          "level": "INFO",
+          "request_id": "req-12345-xyz",
+          "method": "POST",
+          "url": "/api/v1/transaction",
+          "headers": { "User-Agent": "TestClient/1.0" },
+          "status_code": 201
+        }
+      }
+    ]
+  },
+  {
+    id: 'DN3',
+    title: 'Precisão e Governança Fiscal',
+    shortDescription: 'Motor de cálculo v2 e validação de versão de regras.',
+    testScenario: 'Cálculo exato de tributos (v2) e rejeição de versões expiradas (422).',
+    fullDescription: [
+      'RF: Motor de cálculo replica regras vigentes (v2) com precisão ao centavo.',
+      'RNF: Requisições com versão de regra expirada são rejeitadas com 422.',
+      'Governança estrita de versões fiscais.'
+    ],
+    technicalDetails: 'tax_precision_checker.py, tax_rules_v2.json',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'database',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Verificação de Precisão',
+        language: 'python',
+        content: `def check_tax_precision(amount, rules):
+    # RF: Confere valores ao centavo
+    expected_icms = round(amount * rules['icms_rate'], 2)
+    calculated = tax_engine.calculate(amount)
+    
+    assert calculated['icms'] == expected_icms
+    
+    # RNF: Versão expirada
+    if rules['version'] < CURRENT_VERSION:
+        return HTTP_422("Regra expirada")`
+      }
+    ]
+  },
+  {
+    id: 'DN4',
+    title: 'Performance e Monitoramento',
+    shortDescription: 'Teste de carga e sistema de alertas de latência.',
+    testScenario: 'Carga de 20 usuários/1min; Alertas de latência (>6s/>10s/>20s).',
+    fullDescription: [
+      'RF: Teste de carga (Locust) com 20 usuários simulando uso real.',
+      'RNF: Sistema de alertas classifica latência (Moderado/Severo/Crítico).',
+      'Visibilidade imediata de degradação de performance.'
+    ],
+    technicalDetails: 'dn4.md, Locust logs',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'activity',
+    evidence: [
+      {
+        type: 'log',
+        title: 'Alertas de Latência',
+        content: `[WARN] MODERADO: Latência 6.5s (>6s)
+[ERROR] SEVERO: Latência 10.2s (>10s)
+[CRITICAL] CRÍTICO: Latência 22.1s (>20s)
+[INFO] RPS: 4.2 | Active Users: 20`
+      }
+    ]
+  },
+  {
+    id: 'DN5',
+    title: 'Resiliência e SLA',
+    shortDescription: 'Validação de carga, SLA e Rate Limiting.',
+    testScenario: 'Manter p95 <300ms, bloquear excesso (429) e garantir 99.5% sucesso.',
+    fullDescription: [
+      'RF: Validator roda cenários de carga nominal, burst e violação.',
+      'RNF: API mantém p95 <300ms, emite alerta crítico >390ms.',
+      'Bloqueio de excesso com 429 (zero 500) e Rate Limit por account-key.'
+    ],
+    technicalDetails: 'dn5.md, stress_checker.py, locustfile.py',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'cpu',
+    evidence: [
+      {
+        type: 'graph',
+        title: 'SLA Compliance',
+        data: {
+          labels: ['Nominal', 'Burst', 'SLA Violation'],
+          datasets: [
+            { name: 'p95 Latency (ms)', values: [150, 280, 410], color: '#a855f7' },
+            { name: 'Success Rate (%)', values: [100, 99.9, 98.5], color: '#10b981' }
+          ]
+        }
+      }
+    ]
+  }
+];
+
 export const TEAM_MEMBERS: TeamMember[] = [
   { name: 'João Campos', role: 'Developer' },
   { name: 'Thiago Volcati', role: 'Developer' },
@@ -211,6 +365,33 @@ export const NEXT_SPRINT_DELIVERABLES = [
     desc: "Evidência em código de que os requisitos são controlados e testados continuamente."
   }
 ];
+
+export const SPRINT_3_DELIVERABLES = [
+  {
+    title: "Integração e Segurança Avançada",
+    desc: "Integração completa com sistemas legados e hardening de segurança (OAuth2/mTLS)."
+  },
+  {
+    title: "Observabilidade Total",
+    desc: "Dashboards Grafana/Kibana para monitoramento em tempo real dos 5 DNs."
+  },
+  {
+    title: "Testes de Caos",
+    desc: "Validação de resiliência com injeção de falhas (Chaos Engineering)."
+  }
+];
+
+export const SPRINT_2_METRICS = {
+  goal: "Implementação de RF e RNF como Código",
+  progress: 100,
+  driversDelivered: 5,
+  totalDrivers: 5,
+  qualityGate: {
+    ci: "ATIVO",
+    lint: "RÍGIDO",
+    coverage: "85%"
+  }
+};
 
 export const getIcon = (iconName: string, className: string) => {
   switch (iconName) {

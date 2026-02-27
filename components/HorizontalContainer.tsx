@@ -4,22 +4,27 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft } from 'lucide-react';
 import HeroSection from './HeroSection';
 import StatusReport from './StatusReport';
+import StatusReportSprint2 from './StatusReportSprint2';
 import DriverCard from './DriverCard';
 import NextSteps from './NextSteps';
 import TeamSection from './TeamSection';
 import GroupPhotoSection from './GroupPhotoSection';
 import FloatingParallax from './FloatingParallax';
-import { BUSINESS_DRIVERS } from '../constants';
+import { BUSINESS_DRIVERS, SPRINT_2_DRIVERS, NEXT_SPRINT_DELIVERABLES, SPRINT_3_DELIVERABLES } from '../constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface HorizontalContainerProps {
   onBack?: () => void;
+  sprintId?: string;
 }
 
-const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack }) => {
+const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprintId = '01' }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const drivers = sprintId === '01' ? BUSINESS_DRIVERS : SPRINT_2_DRIVERS;
+  const nextStepsDeliverables = sprintId === '01' ? NEXT_SPRINT_DELIVERABLES : SPRINT_3_DELIVERABLES;
 
   useLayoutEffect(() => {
     // Force scroll to top before setting up triggers
@@ -174,11 +179,11 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack }) => 
 
         {/* 2. Status Report (NEW) */}
         <div className="w-[100vw] h-screen flex-shrink-0">
-            <StatusReport />
+            {sprintId === '01' ? <StatusReport /> : <StatusReportSprint2 />}
         </div>
 
         {/* 3. Business Drivers */}
-        {BUSINESS_DRIVERS.map((driver) => (
+        {drivers.map((driver) => (
           <div key={driver.id} className="w-[100vw] h-screen flex items-center justify-center flex-shrink-0 relative z-10 px-4">
              <DriverCard driver={driver} />
           </div>
@@ -186,7 +191,7 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack }) => 
 
         {/* 4. Next Steps */}
         <div className="w-[100vw] h-screen flex-shrink-0">
-            <NextSteps />
+            <NextSteps deliverables={nextStepsDeliverables} sprintId={sprintId} />
         </div>
 
         {/* 5. Team */}

@@ -18,7 +18,7 @@ type HubView = 'MENU' | 'SPRINTS';
 
 const SPRINTS: SprintData[] = [
   { id: '01', title: 'Sprint Review 01', subtitle: 'Architecture & Drivers', status: 'COMPLETED', date: 'FEB 12' },
-  { id: '02', title: 'Sprint Review 02', subtitle: 'Functional Requirements', status: 'LOCKED', date: 'FEB 26' },
+  { id: '02', title: 'Sprint Review 02', subtitle: 'Functional Requirements', status: 'COMPLETED', date: 'FEB 26' },
   { id: '03', title: 'Sprint Review 03', subtitle: 'Performance & Scale', status: 'LOCKED', date: 'MAR 12' },
   { id: '04', title: 'Sprint Review 04', subtitle: 'Security & Audit', status: 'LOCKED', date: 'MAR 26' },
   { id: '05', title: 'Sprint Review 05', subtitle: 'Final Release', status: 'LOCKED', date: 'APR 09' },

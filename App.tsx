@@ -5,7 +5,7 @@ import GeminiAssistant from './components/GeminiAssistant';
 import SprintHub from './components/SprintHub';
 import CustomCursor from './components/CustomCursor';
 
-type ViewState = 'HUB' | 'SPRINT_1';
+type ViewState = 'HUB' | 'SPRINT_1' | 'SPRINT_2';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('HUB');
@@ -49,6 +49,12 @@ function App() {
         setCurrentView('SPRINT_1');
         setIsTransitioning(false);
       }, 800); // Delay for exit animation
+    } else if (sprintId === '02') {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentView('SPRINT_2');
+        setIsTransitioning(false);
+      }, 800);
     }
   };
 
@@ -101,8 +107,11 @@ function App() {
           <SprintHub onSelectSprint={handleEnterSprint} />
         )}
 
-        {currentView === 'SPRINT_1' && (
-          <HorizontalContainer onBack={handleBackToHub} />
+        {(currentView === 'SPRINT_1' || currentView === 'SPRINT_2') && (
+          <HorizontalContainer 
+            onBack={handleBackToHub} 
+            sprintId={currentView === 'SPRINT_1' ? '01' : '02'} 
+          />
         )}
       </div>
       
