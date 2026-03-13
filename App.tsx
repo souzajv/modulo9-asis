@@ -1,15 +1,17 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { Suspense, lazy, useState, useLayoutEffect } from 'react';
 import HorizontalContainer from './components/HorizontalContainer';
 import FaultyTerminal from './components/FaultyTerminal';
-import GeminiAssistant from './components/GeminiAssistant';
 import SprintHub from './components/SprintHub';
 import CustomCursor from './components/CustomCursor';
 
-type ViewState = 'HUB' | 'SPRINT_1' | 'SPRINT_2';
+const GeminiAssistant = lazy(() => import('./components/GeminiAssistant'));
+
+type ViewState = 'HUB' | 'SPRINT_1' | 'SPRINT_2' | 'SPRINT_3';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewState>('HUB');
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const isSprintView = currentView !== 'HUB';
 
   // Manage Body Scroll & Scroll Position using useLayoutEffect
   // useLayoutEffect runs synchronously after DOM mutations but before paint
@@ -55,6 +57,12 @@ function App() {
         setCurrentView('SPRINT_2');
         setIsTransitioning(false);
       }, 800);
+    } else if (sprintId === '03') {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentView('SPRINT_3');
+        setIsTransitioning(false);
+      }, 800);
     }
   };
 
@@ -69,36 +77,37 @@ function App() {
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-50 selection:bg-emerald-500/30 overflow-x-hidden">
       <CustomCursor />
-      
+
       <div className="fixed inset-0 z-0">
         <FaultyTerminal
-          scale={1.5}
+          scale={isSprintView ? 1.2 : 1.5}
           gridMul={[2, 1]}
           digitSize={1.2}
-          timeScale={0.15}
+          timeScale={isSprintView ? 0.08 : 0.15}
           pause={false}
-          scanlineIntensity={0.5} // Reduced for better contrast
-          glitchAmount={isTransitioning ? 3.0 : 1.0} 
+          scanlineIntensity={isSprintView ? 0.2 : 0.5}
+          glitchAmount={isTransitioning ? 3.0 : 1.0}
           flickerAmount={0.3}
           noiseAmp={0.5}
-          chromaticAberration={isTransitioning ? 5.0 : 0.2}
+          chromaticAberration={isTransitioning ? 5.0 : isSprintView ? 0.0 : 0.2}
           dither={0.2}
           curvature={0.1}
           tint="#10b981"
           mouseReact={true}
-          mouseStrength={0.5}
-          pageLoadAnimation={true}
+          mouseStrength={isSprintView ? 0.2 : 0.5}
+          dpr={isSprintView ? 0.35 : 0.6}
+          pageLoadAnimation={!isSprintView}
           brightness={0.4} // Reduced brightness
         />
       </div>
 
       {/* Transition Overlay */}
-      <div 
+      <div
         className={`fixed inset-0 z-[100] bg-black pointer-events-none transition-opacity duration-700 flex items-center justify-center
         ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}
       >
         <div className="font-mono text-emerald-500 animate-pulse text-xl">
-            SYSTEM_HANDSHAKE::ESTABLISHING_CONNECTION...
+          SYSTEM_HANDSHAKE::ESTABLISHING_CONNECTION...
         </div>
       </div>
 
@@ -107,14 +116,14 @@ function App() {
           <SprintHub onSelectSprint={handleEnterSprint} />
         )}
 
-        {(currentView === 'SPRINT_1' || currentView === 'SPRINT_2') && (
-          <HorizontalContainer 
-            onBack={handleBackToHub} 
-            sprintId={currentView === 'SPRINT_1' ? '01' : '02'} 
+        {(currentView === 'SPRINT_1' || currentView === 'SPRINT_2' || currentView === 'SPRINT_3') && (
+          <HorizontalContainer
+            onBack={handleBackToHub}
+            sprintId={currentView === 'SPRINT_1' ? '01' : currentView === 'SPRINT_2' ? '02' : '03'}
           />
         )}
       </div>
-      
+
       {/* Mobile Warning - Visible only on Mobile */}
       <div className="relative z-10 md:hidden w-full h-screen flex items-center justify-center p-8 text-center bg-slate-950/80 backdrop-blur hidden">
         <div>
@@ -124,7 +133,9 @@ function App() {
       </div>
 
       <div className="relative z-50">
-        <GeminiAssistant />
+        <Suspense fallback={null}>
+          <GeminiAssistant />
+        </Suspense>
       </div>
     </div>
   );

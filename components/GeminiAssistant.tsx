@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 import { MessageSquare, X, Send, Bot } from 'lucide-react';
 import { BUSINESS_DRIVERS, NEXT_SPRINT_DELIVERABLES } from '../constants';
 
@@ -11,6 +10,8 @@ const GeminiAssistant: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
+  const apiKey = viteEnv?.VITE_API_KEY || (typeof process !== 'undefined' ? process.env.API_KEY : undefined);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -21,7 +22,7 @@ const GeminiAssistant: React.FC = () => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !process.env.API_KEY) return;
+    if (!input.trim() || !apiKey) return;
 
     const userMsg = input;
     setInput('');
@@ -29,7 +30,8 @@ const GeminiAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey });
       
       // Construct context from constants
       const context = JSON.stringify({ drivers: BUSINESS_DRIVERS, nextSteps: NEXT_SPRINT_DELIVERABLES });
@@ -64,7 +66,7 @@ const GeminiAssistant: React.FC = () => {
     }
   };
 
-  if (!process.env.API_KEY) return null;
+  if (!apiKey) return null;
 
   return (
     <>

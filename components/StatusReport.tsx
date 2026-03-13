@@ -3,7 +3,7 @@ import { Target, Bug, CheckCircle2, AlertCircle, GitMerge, FileCheck } from 'luc
 
 const StatusReport: React.FC = () => {
   return (
-    <div className="w-full h-full flex flex-col justify-center px-12 flex-shrink-0 bg-transparent relative z-10">
+    <div className="w-full h-full flex flex-col justify-center px-12 flex-shrink-0 bg-transparent relative z-10 pt-10">
        <div className="max-w-6xl mx-auto w-full">
          
          <div className="mb-12 border-l-4 border-emerald-500 pl-6">

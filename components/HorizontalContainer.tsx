@@ -5,12 +5,20 @@ import { ArrowLeft } from 'lucide-react';
 import HeroSection from './HeroSection';
 import StatusReport from './StatusReport';
 import StatusReportSprint2 from './StatusReportSprint2';
+import StatusReportSprint3 from './StatusReportSprint3';
 import DriverCard from './DriverCard';
 import NextSteps from './NextSteps';
 import GroupPhotoSection from './GroupPhotoSection';
 import FloatingParallax from './FloatingParallax';
 import EvidenceSlide from './EvidenceSlide';
-import { BUSINESS_DRIVERS, SPRINT_2_DRIVERS, NEXT_SPRINT_DELIVERABLES, SPRINT_3_DELIVERABLES } from '../constants';
+import {
+  BUSINESS_DRIVERS,
+  NEXT_SPRINT_DELIVERABLES,
+  SPRINT_2_DRIVERS,
+  SPRINT_3_DELIVERABLES,
+  SPRINT_3_DRIVERS,
+  SPRINT_4_DELIVERABLES,
+} from '../constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,8 +31,20 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprin
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  const drivers = sprintId === '01' ? BUSINESS_DRIVERS : SPRINT_2_DRIVERS;
-  const nextStepsDeliverables = sprintId === '01' ? NEXT_SPRINT_DELIVERABLES : SPRINT_3_DELIVERABLES;
+  const drivers =
+    sprintId === '01'
+      ? BUSINESS_DRIVERS
+      : sprintId === '02'
+        ? SPRINT_2_DRIVERS
+        : SPRINT_3_DRIVERS;
+
+  const nextStepsDeliverables =
+    sprintId === '01'
+      ? NEXT_SPRINT_DELIVERABLES
+      : sprintId === '02'
+        ? SPRINT_3_DELIVERABLES
+        : SPRINT_4_DELIVERABLES;
+
   const evidenceImages = sprintId === '02'
     ? [
       { src: '/1.jpeg', label: 'Evidência 01' },
@@ -49,6 +69,13 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprin
       const track = trackRef.current;
       if (!track) return;
 
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      const useLightMode = prefersReducedMotion || isTouchDevice;
+
+      // Hint the browser that this element will be transformed continuously.
+      gsap.set(track, { willChange: 'transform', force3D: true });
+
       // Filter out absolute positioned elements to get only the actual slides
       const slides = Array.from(track.children).filter(child => {
         const style = window.getComputedStyle(child as Element);
@@ -63,76 +90,89 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprin
       // We calculate exact movement: (totalSlides - 1) * windowWidth
       const maxTranslate = (totalSlides - 1) * windowWidth;
 
+      // Prepare lightweight setters so we avoid creating multiple ScrollTriggers.
+      const parallaxElements = Array.from(
+        track.querySelectorAll('.parallax-item, .parallax-line')
+      ) as Element[];
+
+      const parallaxItems = parallaxElements.map((item) => {
+        const speed = parseFloat(item.getAttribute('data-speed') || '0.1');
+        return {
+          speed,
+          setX: gsap.quickSetter(item, 'x', 'px'),
+        };
+      });
+
+      const streamLine = document.querySelector('#data-stream-path') as SVGPathElement | null;
+      let setDashOffset: ((value: number) => void) | null = null;
+      let streamLength = 0;
+      if (streamLine && !useLightMode) {
+        streamLength = streamLine.getTotalLength();
+        gsap.set(streamLine, { strokeDasharray: streamLength, strokeDashoffset: streamLength });
+        const dashSetter = gsap.quickSetter(streamLine, 'strokeDashoffset');
+        setDashOffset = (value: number) => {
+          dashSetter(value);
+        };
+      }
+
+      const progressBar = document.querySelector('#progress-bar') as HTMLElement | null;
+      const setProgressScale = progressBar ? gsap.quickSetter(progressBar, 'scaleX') : null;
+      const snapConfig = useLightMode
+        ? {
+          snapTo: 1 / (totalSlides - 1),
+          duration: { min: 0.26, max: 0.46 },
+          delay: 0.03,
+          ease: 'power3.inOut',
+          directional: true,
+          inertia: false,
+        }
+        : {
+          snapTo: 1 / (totalSlides - 1),
+          duration: { min: 0.2, max: 0.38 },
+          delay: 0.02,
+          ease: 'power3.inOut',
+          directional: true,
+          inertia: false,
+        };
+
       gsap.to(track, {
         x: -maxTranslate,
         ease: "none",
+        force3D: true,
         scrollTrigger: {
           trigger: containerRef.current,
           pin: true,
-          scrub: 0.5, // Reduced scrub for snappier feel
-          snap: {
-            snapTo: 1 / (totalSlides - 1),
-            duration: { min: 0.2, max: 0.5 },
-            delay: 0.0, // Instant snap calculation start
-            ease: "power2.out",
-            inertia: false // Strict snapping
+          scrub: useLightMode ? 0.26 : 0.42,
+          snap: snapConfig,
+          fastScrollEnd: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            const progress = self.progress;
+            const currentX = -maxTranslate * progress;
+
+            if (!useLightMode) {
+              for (const item of parallaxItems) {
+                item.setX(currentX * item.speed);
+              }
+
+              if (setDashOffset) {
+                setDashOffset(streamLength * (1 - progress));
+              }
+            }
+
+            if (setProgressScale) {
+              setProgressScale(progress);
+            }
           },
           end: () => "+=" + totalWidth, // Scroll duration proportional to width
           invalidateOnRefresh: true // Handle resizes better
         }
       });
-
-      // Parallax Effect for Background Elements
-      const parallaxItems = track.querySelectorAll('.parallax-item, .parallax-line');
-      parallaxItems.forEach((item) => {
-        const speed = parseFloat(item.getAttribute('data-speed') || '0.1');
-
-        gsap.to(item, {
-          x: -maxTranslate * speed,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: () => "+=" + totalWidth,
-            scrub: 0.5
-          }
-        });
-      });
-
-      // Animate the "Data Stream" line drawing
-      const streamLine = document.querySelector('#data-stream-path');
-      if (streamLine) {
-        const length = (streamLine as SVGPathElement).getTotalLength();
-        gsap.set(streamLine, { strokeDasharray: length, strokeDashoffset: length });
-
-        gsap.to(streamLine, {
-          strokeDashoffset: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: () => "+=" + totalWidth,
-            scrub: 0.5
-          }
-        });
-      }
     }, containerRef);
 
     return () => {
-      // 1. Revert animations and pins inside this context
+      // Revert only animations/triggers created in this component context.
       ctx.revert();
-
-      // 2. Kill all global ScrollTriggers to ensure no ghost triggers remain
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-
-      // 3. Clear any inline styles that ScrollTrigger might have left on the body/html
-      // (Pinning sometimes adds padding/overflow/height to body)
-      ScrollTrigger.clearMatchMedia();
-
-      // 4. Force a refresh to recalculate layout without the pinned elements
-      ScrollTrigger.refresh();
-
-      // 5. Hard reset scroll
       window.scrollTo(0, 0);
     };
   }, []);
@@ -194,7 +234,7 @@ const HorizontalContainer: React.FC<HorizontalContainerProps> = ({ onBack, sprin
 
         {/* 2. Status Report (NEW) */}
         <div className="w-[100vw] h-screen flex-shrink-0">
-          {sprintId === '01' ? <StatusReport /> : <StatusReportSprint2 />}
+          {sprintId === '01' ? <StatusReport /> : sprintId === '02' ? <StatusReportSprint2 /> : <StatusReportSprint3 />}
         </div>
 
         {/* 3. Business Drivers */}

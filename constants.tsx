@@ -381,6 +381,188 @@ export const SPRINT_3_DELIVERABLES = [
   }
 ];
 
+export const SPRINT_4_DELIVERABLES = [
+  {
+    title: "Dashboard de Qualidade Vivo",
+    desc: "Catálogo de serviços monitorados, histórico de testes e alertas automatizados para toda a malha de integrações."
+  },
+  {
+    title: "Red Team x Blue Team",
+    desc: "Consolidação dos ataques de caos, vulnerabilidades encontradas e evidências de correção em código."
+  },
+  {
+    title: "Governança de Releases",
+    desc: "Indicadores de change lead time, sucesso de deploy, rollback e auditoria fim a fim por release_id."
+  }
+];
+
+export const SPRINT_3_DRIVERS: BusinessDriver[] = [
+  {
+    id: 'INT-01',
+    title: 'Upload API -> Message Broker',
+    shortDescription: 'A API recebe arquivo e responde 202, desacoplando processamento via fila asis.upload.process.',
+    testScenario: 'Bridge: abrir integration_checker.py e mostrar a checagem INT-01 validando publicação da BrokerMessage com schema v1.0.0.',
+    fullDescription: [
+      'Problema: processamento síncrono degrada sob pico fiscal.',
+      'Ataque: uploads simultâneos para estourar tempo de resposta.',
+      'Defesa: enfileiramento no broker com confirmação imediata e contrato versionado.',
+      'Resultado: integração validada com checks automatizados e trilha em metrics JSON.'
+    ],
+    technicalDetails: 'g02/src/testes/integracoes/validators/integration_checker.py + contracts/integration_contracts.json',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'database',
+    evidence: [
+      {
+        type: 'code',
+        title: 'INT-01 Aferição em Código',
+        language: 'python',
+        content: `def checar_int01_upload_para_broker(self) -> IntegrationResult:\n    created = service.create_upload(...)\n\n    msg = BrokerMessage(process_id=created.process_id)\n    broker.publish(QUEUE_PROCESS, msg)\n\n    queue_size = broker.queue_size(QUEUE_PROCESS)\n    if queue_size != 1:\n        result.errors.append(...)\n\n    consumed = broker.consume(QUEUE_PROCESS)\n    if not isinstance(consumed.process_id, int):\n        result.errors.append(...)\n\n    total = broker.total_published(QUEUE_PROCESS)\n    if total != 1:\n        result.errors.append(...)`
+      },
+      {
+        type: 'json',
+        title: 'Contrato Versionado da Integração',
+        data: {
+          "id": "INT-01",
+          "contract_version": "1.0.0",
+          "contract_hash": "sha256:a1b2c3d4e5f6",
+          "producer": "POST /api/v1/upload",
+          "consumer": "asis.upload.process",
+          "http_status_on_accept": 202
+        }
+      }
+    ]
+  },
+  {
+    id: 'INT-02',
+    title: 'Worker de Resiliência -> Repositório',
+    shortDescription: 'Worker consome fila e persiste status do processo (100 -> 201) com data_hora_fim para auditoria.',
+    testScenario: 'Bridge: abrir resilience_worker.py e mostrar outcome ok + persistência status=201 no repositório.',
+    fullDescription: [
+      'Problema: sem confirmação persistida, cliente não sabe se o job terminou.',
+      'Ataque: simular mensagens concorrentes e falhas intermitentes de processamento.',
+      'Defesa: worker resiliente com atualização explícita de status no ProcessRepository.',
+      'Resultado: polling confiável e rastreabilidade de conclusão por processo.'
+    ],
+    technicalDetails: 'g02/src/testes/integracoes/workers/resilience_worker.py',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'activity',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Processamento e Status 201',
+        language: 'python',
+        content: `def process_message(self, msg: BrokerMessage) -> str:\n    try:\n        self._service.process_job(msg.process_id)\n        self._outcomes.append({"process_id": msg.process_id, "result": "ok"})\n        return "ok"\n    except Exception as exc:\n        ...\n\n# Checker\nif process.status != 201:\n    result.errors.append(f"Status esperado 201, encontrado {process.status}")`
+      },
+      {
+        type: 'json',
+        title: 'Métrica da Execução',
+        data: {
+          "id": "INT-02",
+          "passed": true,
+          "checks": [
+            "Worker consumiu mensagem",
+            "status=201 no repositório",
+            "data_hora_fim preenchida"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    id: 'INT-03',
+    title: 'CI GitLab -> Manifesto -> Jenkins Handoff',
+    shortDescription: 'Pipeline executa testes de contrato, gera release-manifest e aciona Jenkins com release_id assinada.',
+    testScenario: 'Bridge: abrir .gitlab-ci.yml no stage handoff e mostrar generate_release_manifest + POST para Jenkins.',
+    fullDescription: [
+      'Problema: deploy sem versionamento quebra sincronismo entre times e ambientes.',
+      'Ataque: simular mudança em main sem trilha de release e sem validação de contrato.',
+      'Defesa: pipeline com gates, contrato automatizado e handoff autenticado para CD.',
+      'Resultado: release_id rastreável (rel-YYYYMMDD-sha) e governança de promoção/rollback.'
+    ],
+    technicalDetails: 'g02/.gitlab-ci.yml + g02/scripts/generate_release_manifest.py + g02/jenkins/pipelines',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'cpu',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Gate + Handoff',
+        language: 'yaml',
+        content: `test:\n  script:\n    - python -m pytest src/release_orchestrator/tests -q\n    - python -m pytest src/testes/contract_testing -q\n\nhandoff:\n  rules:\n    - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'\n  script:\n    - python scripts/generate_release_manifest.py --image "$IMAGE_TAG" --commit-sha "$CI_COMMIT_SHA" --output release-manifest.json\n    - python - <<'PY'\n      manifest = json.loads(Path("release-manifest.json").read_text())\n      print(manifest["release_id"])\n      PY`
+      },
+      {
+        type: 'json',
+        title: 'Assinatura de Versão da Release',
+        data: {
+          "release_id": "rel-YYYYMMDD-<shortsha>",
+          "source": "main push",
+          "includes": ["commit_sha", "image", "feature defaults", "repo_url"]
+        }
+      }
+    ]
+  },
+  {
+    id: 'INT-04',
+    title: 'Orquestrador -> Deploy/Promote/Rollback + Feature Flags',
+    shortDescription: 'Release Orchestrator centraliza deploy por ambiente, auditoria e toggle de feature por release.',
+    testScenario: 'Bridge: abrir release_orchestrator/main.py (deployments + patch de feature) e cicd_orchestrator.md.',
+    fullDescription: [
+      'Problema: mudança de negócio sem controle fino de ativação aumenta risco em produção.',
+      'Ataque: forçar rollback rápido após bug em release recente.',
+      'Defesa: endpoints de deploy/promote/rollback e patch de feature flag por ambiente.',
+      'Resultado: decisões rápidas de negócio com trilha de auditoria e reversão controlada.'
+    ],
+    technicalDetails: 'g02/src/release_orchestrator/main.py + g02/src/tributron/feature_flags.py',
+    status: DriverStatus.IMPLEMENTED,
+    icon: 'lock',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Endpoints de Orquestração',
+        language: 'python',
+        content: `@app.post("/deployments")\ndef deploy_release(payload: DeployRequest, actor: str = Depends(_require_auth)) -> dict[str, Any]:\n    ...\n\n@app.post("/deployments/promote")\ndef promote_to_production(payload: PromoteRequest, actor: str = Depends(_require_auth)) -> dict[str, Any]:\n    ...\n\n@app.post("/deployments/rollback")\ndef rollback_env(payload: RollbackRequest, actor: str = Depends(_require_auth)) -> dict[str, Any]:\n    ...\n\n@app.patch("/releases/{release_id}/features/{feature_key}")\ndef patch_release_feature(...):\n    ...`
+      },
+      {
+        type: 'code',
+        title: 'Catálogo de Flags',
+        language: 'python',
+        content: `register_feature(key="core_uploads", default_enabled=True, description="...")\nregister_feature(key="core_process_read", default_enabled=True, description="...")\nregister_feature(key="core_results", default_enabled=True, description="...")\nregister_feature(key="diagnostics_release_info", default_enabled=True, description="...")`
+      }
+    ]
+  },
+  {
+    id: 'INT-05',
+    title: 'Observabilidade e Escalabilidade (Blueprint Arquitetural)',
+    shortDescription: 'Integração de monitoramento e elasticidade (ALB/K8s/Datadog) mapeada para hardening da Sprint 4.',
+    testScenario: 'Bridge: mostrar docs/cicd_orchestrator.md e projeto.md; classificar como Em Construção para monitoramento externo e autoscaling produtivo.',
+    fullDescription: [
+      'Problema: picos fiscais exigem visão em tempo real e resposta automática da infraestrutura.',
+      'Ataque: sobrecarga com múltiplos usuários e falhas de rede entre nós.',
+      'Defesa: health checks ativos, balanceamento e plano de autoscaling/telemetria externa.',
+      'Resultado: trilha técnica pronta para conectar monitoramento externo e escalar com segurança.'
+    ],
+    technicalDetails: 'g02/docker-compose.yml (healthcheck) + g02/docs/cicd_orchestrator.md + g02/documentos/projeto.md',
+    status: DriverStatus.IN_PROGRESS,
+    icon: 'shield',
+    evidence: [
+      {
+        type: 'code',
+        title: 'Health Check da API',
+        language: 'yaml',
+        content: `api:\n  healthcheck:\n    test:\n      [\n        "CMD-SHELL",\n        "python -c \\\"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)\\\"",\n      ]\n    interval: 5s\n    timeout: 3s\n    retries: 20`
+      },
+      {
+        type: 'json',
+        title: 'Classificação de Entregável',
+        data: {
+          "status": "Em Construcao / Blueprint Arquitetural",
+          "next_step": "Conectar telemetria externa e autoscaling produtivo",
+          "sprint_target": "Sprint 4"
+        }
+      }
+    ]
+  }
+];
+
 export const SPRINT_2_METRICS = {
   goal: "Implementação de RF e RNF como Código",
   progress: 100,
@@ -390,6 +572,18 @@ export const SPRINT_2_METRICS = {
     ci: "ATIVO",
     lint: "RÍGIDO",
     coverage: "85%"
+  }
+};
+
+export const SPRINT_3_METRICS = {
+  goal: "Solução Técnica e Integrações como Ativo de Software",
+  progress: 90,
+  driversDelivered: 4,
+  totalDrivers: 5,
+  qualityGate: {
+    ci: "ATIVO",
+    contracts: "VERSIONADO",
+    handoff: "JENKINS READY"
   }
 };
 
